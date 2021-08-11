@@ -1,0 +1,8 @@
+[toolchain]
+channel = "nightly"
+targets = [
+    "i686-uwp-windows-msvc",
+    "x86_64-uwp-windows-msvc",
+    "thumbv7a-uwp-windows-msvc",
+    "aarch64-uwp-windows-msvc"
+]
