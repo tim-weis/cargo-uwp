@@ -14,7 +14,7 @@ use ops::New;
 enum Opt {
     #[structopt(
         name = "uwp",
-        about = "Custom cargo command to create, manage, and package UWP applications"
+        about = "Custom Cargo command to create, manage, and package UWP applications"
     )]
     Uwp {
         #[structopt(subcommand)]
