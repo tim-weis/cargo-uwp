@@ -1,3 +1,4 @@
+#![cfg(target_os = "windows")]
 #![forbid(unsafe_code)]
 
 use structopt::StructOpt;

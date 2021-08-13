@@ -37,10 +37,10 @@ pub(crate) const SQUARE_150_LOGO_PNG_FILENAME: &str = "Square150x150Logo.scale-2
 /// *build.rs* build script, adjusted as needed, and then copied to `OUT_DIR`.
 ///
 /// Clients can choose to make modifications to these templates. This is somewhat of an
-/// advanced topic, and not generally required. Let's generate those into a "dot"-
-/// directory to keep their visibility somewhat "hidden by convention".
+/// advanced topic, and not generally required (with the exception of managing assets
+/// for later packaging though the *FileMapping.ini* file).
 ///
-pub(crate) const TEMPLATES_DIR: &str = ".templates";
+pub(crate) const TEMPLATES_DIR: &str = "templates";
 
 pub(crate) const APPX_MANIFEST_TEMPLATE: &[u8] =
     include_bytes!("../data/templates/AppxManifest.xml");
@@ -130,10 +130,15 @@ toml = "0.5.8"
 "#;
 
 /// Bindings crate
+///
 pub(crate) const BINDINGS_CRATE_PATH: &str = "bindings";
 pub(crate) const BINDINGS_CARGO_TOML: &str = include_str!("../data/bindings/Cargo.toml");
 pub(crate) const BINDINGS_BUILD_RS: &[u8] = include_bytes!("../data/bindings/build.rs");
 pub(crate) const BINDINGS_SRC_LIB_RS: &[u8] = include_bytes!("../data/bindings/src/lib.rs");
+
+/// Generated src/main.rs
+///
+pub(crate) const SRC_MAIN_RS: &[u8] = include_bytes!("../data/src/main.rs");
 
 /// Placeholders that get replaced during various operations, when copying from templates
 /// to the final artifacts.

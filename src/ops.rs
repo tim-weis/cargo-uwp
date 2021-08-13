@@ -15,8 +15,8 @@ use crate::data::{
     FILE_MAPPINGS_TEMPLATE_FILENAME, PACKAGE_METADATA_INIT, RUST_TOOLCHAIN_TOML,
     RUST_TOOLCHAIN_TOML_FILENAME, SPLASH_SCREEN_PNG, SPLASH_SCREEN_PNG_FILENAME,
     SQUARE_150_LOGO_PNG, SQUARE_150_LOGO_PNG_FILENAME, SQUARE_44_LOGO_PNG,
-    SQUARE_44_LOGO_PNG_FILENAME, STORE_LOGO_PNG, STORE_LOGO_PNG_FILENAME, TEMPLATES_DIR,
-    WINDOWS_RS_VERSION, WINDOWS_RS_VERSION_PLACEHOLDER,
+    SQUARE_44_LOGO_PNG_FILENAME, SRC_MAIN_RS, STORE_LOGO_PNG, STORE_LOGO_PNG_FILENAME,
+    TEMPLATES_DIR, WINDOWS_RS_VERSION, WINDOWS_RS_VERSION_PLACEHOLDER,
 };
 
 #[derive(Debug, StructOpt)]
@@ -86,6 +86,9 @@ impl New {
             "lib.rs",
             BINDINGS_SRC_LIB_RS,
         )?;
+
+        // Write sample source
+        write_file(&package_root, Some(&["src"]), "main.rs", SRC_MAIN_RS)?;
 
         // Update Cargo.toml to include the bindings crate
         let mut manifest_file = PathBuf::from(&package_root);

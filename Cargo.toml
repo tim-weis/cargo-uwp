@@ -3,6 +3,11 @@ name = "cargo-uwp"
 version = "0.0.0"
 edition = "2018"
 
+[[bin]]
+name = "cargo-uwp"
+path = "src/main.rs"
+doc = false
+
 [dependencies]
 anyhow = "1.0.42"
 console = "0.14.1"
