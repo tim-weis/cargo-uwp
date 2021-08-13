@@ -1,7 +1,13 @@
 [package]
 name = "cargo-uwp"
-version = "0.0.0"
+version = "0.1.0"
+authors = ["Tim Weis <tim.weis@outlook.com>"]
 edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "Custom Cargo command to create, manage, and package UWP applications"
+repository = "https://github.com/tim-weis/cargo-uwp"
+readme = "README.md"
+exclude = ["docs", "README.md"]
 
 [[bin]]
 name = "cargo-uwp"
