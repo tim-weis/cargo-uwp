@@ -132,9 +132,9 @@ toml = "0.5.8"
 /// Bindings crate
 ///
 pub(crate) const BINDINGS_CRATE_PATH: &str = "bindings";
-pub(crate) const BINDINGS_CARGO_TOML: &str = include_str!("../data/bindings/Cargo.toml");
-pub(crate) const BINDINGS_BUILD_RS: &[u8] = include_bytes!("../data/bindings/build.rs");
-pub(crate) const BINDINGS_SRC_LIB_RS: &[u8] = include_bytes!("../data/bindings/src/lib.rs");
+pub(crate) const BINDINGS_CARGO_TOML: &str = include_str!("../data/bindings/Cargo.toml_");
+pub(crate) const BINDINGS_BUILD_RS: &[u8] = include_bytes!("../data/bindings/build.rs_");
+pub(crate) const BINDINGS_SRC_LIB_RS: &[u8] = include_bytes!("../data/bindings/src/lib.rs_");
 
 /// Generated src/main.rs
 ///
