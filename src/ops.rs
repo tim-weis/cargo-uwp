@@ -7,16 +7,27 @@ use std::{fs, path::PathBuf};
 use structopt::StructOpt;
 use toml_edit as toml;
 
+use cargo_uwp::{
+    PACKAGE_IDENTITY_NAME_DEFAULT, PACKAGE_IDENTITY_NAME_KEY, PACKAGE_IDENTITY_PUBLISHER_DEFAULT,
+    PACKAGE_IDENTITY_PUBLISHER_KEY, PACKAGE_PUBLISHER_DISPLAY_NAME_DEFAULT,
+    PACKAGE_PUBLISHER_DISPLAY_NAME_KEY, PACKAGE_VISUAL_DESCRIPTION_DEFAULT,
+    PACKAGE_VISUAL_DESCRIPTION_KEY, PACKAGE_VISUAL_DISPLAY_NAME_DEFAULT,
+    PACKAGE_VISUAL_DISPLAY_NAME_KEY,
+};
+
 use crate::cargo;
 use crate::data::{
     APPX_MANIFEST_TEMPLATE, APPX_MANIFEST_TEMPLATE_FILENAME, ASSETS_DIR, BINDINGS_BUILD_RS,
     BINDINGS_CARGO_TOML, BINDINGS_CRATE_PATH, BINDINGS_SRC_LIB_RS, BUILD_RS, BUILD_RS_FILENAME,
     CARGO_CONFIG_DIR, CARGO_CONFIG_TOML, CARGO_CONFIG_TOML_FILENAME, FILE_MAPPINGS_TEMPLATE,
-    FILE_MAPPINGS_TEMPLATE_FILENAME, PACKAGE_METADATA_INIT, RUST_TOOLCHAIN_TOML,
-    RUST_TOOLCHAIN_TOML_FILENAME, SPLASH_SCREEN_PNG, SPLASH_SCREEN_PNG_FILENAME,
-    SQUARE_150_LOGO_PNG, SQUARE_150_LOGO_PNG_FILENAME, SQUARE_44_LOGO_PNG,
-    SQUARE_44_LOGO_PNG_FILENAME, SRC_MAIN_RS, STORE_LOGO_PNG, STORE_LOGO_PNG_FILENAME,
-    TEMPLATES_DIR, WINDOWS_RS_VERSION, WINDOWS_RS_VERSION_PLACEHOLDER,
+    FILE_MAPPINGS_TEMPLATE_FILENAME, PACKAGE_IDENTITY_NAME_PLACEHOLDER,
+    PACKAGE_IDENTITY_PUBLISHER_PLACEHOLDER, PACKAGE_METADATA_INIT,
+    PACKAGE_PUBLISHER_DISPLAY_NAME_PLACEHOLDER, PACKAGE_VISUAL_DESCRIPTION_PLACEHOLDER,
+    PACKAGE_VISUAL_DISPLAY_NAME_PLACEHOLDER, RUST_TOOLCHAIN_TOML, RUST_TOOLCHAIN_TOML_FILENAME,
+    SPLASH_SCREEN_PNG, SPLASH_SCREEN_PNG_FILENAME, SQUARE_150_LOGO_PNG,
+    SQUARE_150_LOGO_PNG_FILENAME, SQUARE_44_LOGO_PNG, SQUARE_44_LOGO_PNG_FILENAME, SRC_MAIN_RS,
+    STORE_LOGO_PNG, STORE_LOGO_PNG_FILENAME, TEMPLATES_DIR, WINDOWS_RS_VERSION,
+    WINDOWS_RS_VERSION_PLACEHOLDER,
 };
 
 #[derive(Debug, StructOpt)]
@@ -27,13 +38,8 @@ pub(crate) struct New {
 
 impl New {
     pub(crate) fn perform(&self) -> anyhow::Result<()> {
-        // TODO: Change this to use self.path instead, once everything has settled.
-        let package_root = if cfg!(debug_assertions) {
-            PathBuf::from(r#"C:\Users\Tim\source\_temp\uwp-rs"#)
-        } else {
-            PathBuf::from(&self.path)
-        };
-        cargo::new([&package_root].iter())?;
+        let package_root = PathBuf::from(&self.path);
+        cargo::new([&self.path].iter())?;
 
         // At this point the package directory should exist, so we could use
         // `canonicalize` if we ever need a fully qualified path name, e.g.:
@@ -48,11 +54,49 @@ impl New {
             RUST_TOOLCHAIN_TOML,
         )?;
 
+        // Expand placeholders in `package.metadata` table
+        let mut metadata = PACKAGE_METADATA_INIT.to_owned();
+        for (from, (k, v)) in [
+            (
+                PACKAGE_IDENTITY_NAME_PLACEHOLDER,
+                (PACKAGE_IDENTITY_NAME_KEY, PACKAGE_IDENTITY_NAME_DEFAULT),
+            ),
+            (
+                PACKAGE_IDENTITY_PUBLISHER_PLACEHOLDER,
+                (
+                    PACKAGE_IDENTITY_PUBLISHER_KEY,
+                    PACKAGE_IDENTITY_PUBLISHER_DEFAULT,
+                ),
+            ),
+            (
+                PACKAGE_PUBLISHER_DISPLAY_NAME_PLACEHOLDER,
+                (
+                    PACKAGE_PUBLISHER_DISPLAY_NAME_KEY,
+                    PACKAGE_PUBLISHER_DISPLAY_NAME_DEFAULT,
+                ),
+            ),
+            (
+                PACKAGE_VISUAL_DISPLAY_NAME_PLACEHOLDER,
+                (
+                    PACKAGE_VISUAL_DISPLAY_NAME_KEY,
+                    PACKAGE_VISUAL_DISPLAY_NAME_DEFAULT,
+                ),
+            ),
+            (
+                PACKAGE_VISUAL_DESCRIPTION_PLACEHOLDER,
+                (
+                    PACKAGE_VISUAL_DESCRIPTION_KEY,
+                    PACKAGE_VISUAL_DESCRIPTION_DEFAULT,
+                ),
+            ),
+        ] {
+            metadata = metadata.replace(from, &format!("{} = \"{}\"", k, v));
+        }
         // Append `package.metadata` to *Cargo.toml*
         let mut cargo_toml = PathBuf::from(&package_root);
         cargo_toml.push("Cargo.toml");
         let mut contents = fs::read(&cargo_toml)?;
-        contents.extend_from_slice(PACKAGE_METADATA_INIT.as_bytes());
+        contents.extend_from_slice(metadata.as_bytes());
         fs::write(&cargo_toml, contents)?;
 
         // Write default cargo configuration

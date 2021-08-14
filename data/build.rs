@@ -8,7 +8,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use toml::Value;
+use toml::{value::Map, Value};
+
+use cargo_uwp::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let cargo_config = get_cargo_config()?;
@@ -176,18 +178,20 @@ fn get_appx_config(
         .ok_or("Missing [appxmanifest] table")?;
 
     // Extract identity name
-    let identity_name = appxmanifest
-        .get("package-identity-name")
-        .and_then(|val| val.as_str())
-        .ok_or("Missing or invalid 'package-identity-name' entry")?
-        .to_owned();
+    let identity_name = get_value(appxmanifest, PACKAGE_IDENTITY_NAME_KEY)?;
+    warn_if_default(
+        PACKAGE_IDENTITY_NAME_KEY,
+        &identity_name,
+        PACKAGE_IDENTITY_NAME_DEFAULT,
+    );
 
     // Extract identity publisher
-    let identity_publisher = appxmanifest
-        .get("package-identity-publisher")
-        .and_then(|val| val.as_str())
-        .ok_or("Missing or invalid 'package-identity-publisher' entry")?
-        .to_owned();
+    let identity_publisher = get_value(appxmanifest, PACKAGE_IDENTITY_PUBLISHER_KEY)?;
+    warn_if_default(
+        PACKAGE_IDENTITY_PUBLISHER_KEY,
+        &identity_publisher,
+        PACKAGE_IDENTITY_PUBLISHER_DEFAULT,
+    );
 
     // Extract identity version; fall back to package version when missing
     let identity_version = if let Some(version) = appxmanifest.get("package-identity-version") {
@@ -223,25 +227,28 @@ fn get_appx_config(
     };
 
     // Extract publisher display name
-    let publisher_display_name = appxmanifest
-        .get("package-properties-publisherdisplayname")
-        .and_then(|name| name.as_str())
-        .ok_or("Missing or invalid 'package-properties-publisherdisplayname' entry")?
-        .to_owned();
+    let publisher_display_name = get_value(appxmanifest, PACKAGE_PUBLISHER_DISPLAY_NAME_KEY)?;
+    warn_if_default(
+        PACKAGE_PUBLISHER_DISPLAY_NAME_KEY,
+        &publisher_display_name,
+        PACKAGE_PUBLISHER_DISPLAY_NAME_DEFAULT,
+    );
 
     // Extract application display name
-    let app_display_name = appxmanifest
-        .get("package-applications-visualelements-displayname")
-        .and_then(|name| name.as_str())
-        .ok_or("Missing or invalid 'package-applications-visualelements-displayname' entry")?
-        .to_owned();
+    let app_display_name = get_value(appxmanifest, PACKAGE_VISUAL_DISPLAY_NAME_KEY)?;
+    warn_if_default(
+        PACKAGE_VISUAL_DISPLAY_NAME_KEY,
+        &app_display_name,
+        PACKAGE_VISUAL_DISPLAY_NAME_DEFAULT,
+    );
 
     // Extract application description
-    let app_description = appxmanifest
-        .get("package-applications-visualelements-description")
-        .and_then(|desc| desc.as_str())
-        .ok_or("Missing or invalid 'package-applications-visualelements-description' entry")?
-        .to_owned();
+    let app_description = get_value(appxmanifest, PACKAGE_VISUAL_DESCRIPTION_KEY)?;
+    warn_if_default(
+        PACKAGE_VISUAL_DESCRIPTION_KEY,
+        &app_description,
+        PACKAGE_VISUAL_DESCRIPTION_DEFAULT,
+    );
 
     Ok(AppxConfig {
         identity_name,
@@ -253,6 +260,20 @@ fn get_appx_config(
         app_display_name,
         app_description,
     })
+}
+
+fn get_value(manifest: &Map<String, Value>, key: &str) -> Result<String, Box<dyn Error>> {
+    Ok(manifest
+        .get(key)
+        .and_then(|val| val.as_str())
+        .ok_or(format!("Missing or invalid '{}' key", key))?
+        .to_owned())
+}
+
+fn warn_if_default(key: &str, value: &str, default: &str) {
+    if value == default {
+        println!("cargo:warning=Metadata key '{}' uses default value", key);
+    }
 }
 
 fn generate_appx_manifest(
