@@ -1,5 +1,5 @@
 [![crates.io](https://img.shields.io/crates/v/cargo-uwp.svg)](https://crates.io/crates/cargo-uwp)
-![platform-support](https://img.shields.io/badge/platform-windows--only-critical)
+![platform-support](https://img.shields.io/badge/platform-windows--only-critical?logo=windows)
 
 # `cargo uwp` <!-- omit in toc -->
 
@@ -16,9 +16,9 @@ A custom Cargo command to create, manage, and package UWP applications.
 
 ## Introduction
 
-Windows developers can choose to write against several different application models. Targeting the Universal Windows Platform (UWP) poses the unique challenge of requiring a lot of transformations and infrastructure artifacts to turn source code into and executable or deployable application.
+Windows developers can choose to write against several different application models. Targeting the Universal Windows Platform (UWP) poses the unique challenge of requiring a lot of transformations and infrastructure artifacts to turn source code into an executable or deployable application package.
 
-`cargo uwp` aims to make this process less tedious, reducing opportunities for mistakes, and catching errors early. It can generate a Cargo package suitably configured for the UWP, alongside a Cargo [build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html) that manages build artifacts required for deployment and packaging.
+`cargo uwp` aims to make this process less tedious, reducing opportunities for mistakes, and catching errors early. It can generate a Cargo package suitably configured for the UWP, alongside a Cargo [build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html) that manages build artifacts required for packaging and deployment.
 
 The generated starter package depends on the [windows-rs](https://crates.io/crates/windows) crate as a Windows Runtime projection for Rust. This is not a hard requirement at this time, but that is likely to change [over time](#future-work).
 
@@ -42,7 +42,7 @@ This should print out the version of the installed binary.
 
 ### First project
 
-With everything set up, it's time to generate a new UWP cargo package. Following Cargo's lead the subcommand to do so is unsurprisingly named `new`. The following
+With everything set up, it's time to generate a new UWP Cargo package. Following Cargo's lead the subcommand to do so is unsurprisingly named `new`. The following
 
 ```none
 cargo uwp new uwp-rs
@@ -54,7 +54,7 @@ will set up a new Cargo package called *uwp-rs*. It invokes `cargo new` undernea
 
 The modified *Cargo.toml* file now contains a `[package.metadata.appxmanifest]` table. Its entries drive the Cargo build script (*build.rs*) in generating an *AppxManifest.xml* file for later use. Each item is documented to provide guidance on what needs to be supplied, and whether it is required or optional.
 
-For local testing it is sufficient to provide dummy values for all required entries. Any string value will do, so long as it doesn't contain any characters that are [reserved in XML](https://www.w3.org/TR/xml/#syntax) such as `<`, `>`, or `&`. Once that is done, issuing
+For local testing it is sufficient to provide dummy values for all of the 5 required entries. Any string value will do, so long as it doesn't contain any characters that are [reserved in XML](https://www.w3.org/TR/xml/#syntax) such as `<`, `>`, or `&`. Once that is done, issuing
 
 ```none
 cargo build
@@ -64,7 +64,7 @@ should succeed, and produce a binary called *uwp-rs.exe* into *target\\x86_64-uw
 
 ### Launching the application
 
-Naturally, you'd wish to head right in and do that, just to be presented with an error dialog. Like anything UWP, how to launch a UWP application is neither simple nor obvious. To do that, the application needs to be registered first.
+Naturally, you'd wish to head right in and do that, just to be presented with an error dialog. Like anything UWP, launching a UWP application is neither simple nor obvious. To do that, the application needs to be registered first.
 
 At this time, there's still a manual step required here, namely copying the *Assets* folder to the target directory (*target\\x86_64-uwp-windows-msvc\\debug*). Once that is done it's time to actually register the application.
 
@@ -74,7 +74,7 @@ Open a command prompt and navigate to the target directory (where you just copie
 powershell -command "Add-AppxPackage -Register AppxManifest.xml"
 ```
 
-If that all went through, you should now see your UWP application in the Start menu, ready to be launched. This time for real.
+If that all went well, you should now see your UWP application in the Start menu, ready to be launched. This time for real.
 
 > *Hint: Should you ever lose track of where your UWP application went, just open a command prompt and type*
 > 
@@ -88,7 +88,7 @@ If that all went through, you should now see your UWP application in the Start m
 
 Getting all the way here was quite a bit of work. Surely, you haven't gone through this for giggles. After all, you will want to share your work, and package your UWP application for deployment.
 
-First, though, you will have to go back and provide meaningful values which we haven't in the [build preparation](#build-preparation) section above. With that done, there's nothing keeping you from [packaging, bundling, and .appxupload](docs/appx/Packaging.md)-ing your UWP application to the Store. Sadly, none of that [has found](#future-work) its way into `cargo uwp`. This isn't quite over yet.
+First, though, you will have to go back and provide meaningful values which we haven't in the [build preparation](#build-preparation) section above. With that out of the way, there's nothing keeping you from [packaging, bundling, and .appxupload](docs/appx/Packaging.md)-ing your UWP application to the Store. Sadly, none of that [has found](#future-work) its way into `cargo uwp`. This isn't quite over yet.
 
 ## Future work
 
