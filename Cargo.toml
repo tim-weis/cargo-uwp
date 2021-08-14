@@ -7,6 +7,8 @@ license = "MIT OR Apache-2.0"
 description = "Custom Cargo command to create, manage, and package UWP applications"
 repository = "https://github.com/tim-weis/cargo-uwp"
 readme = "README.md"
+keywords = ["windows", "uwp", "build-tools"]
+categories = ["development-tools::cargo-plugins", "development-tools::build-utils"]
 exclude = ["docs", "README.md"]
 
 [[bin]]
