@@ -66,7 +66,7 @@ At this time, there's still a manual step required here, namely copying the *Ass
 
 ```none
 mkdir Assets
-copy ..\..\..\Assets\*.* Assets\
+copy ..\..\..\Assets\* Assets\
 ```
 
 With the command prompt still open, everything is now in place for the grand finale:
@@ -91,9 +91,20 @@ Debugging a Rust application from Visual Studio Code has never been much of a fu
 
 To [debug an installed UWP app package](https://docs.microsoft.com/en-us/visualstudio/debugger/debug-installed-app-package) launch Visual Studio (2017 or later), open the *Debug* menu, expand the *Other Debug Targets* item, and select *Debug Installed App Package...*. Once you've found your new application, you can hit *Start*, and off you go.
 
-With the application launched go to *File*, *Open*, and selected *File...*. Navigate to the source corresponding to the application, and load up *main.rs*. You can now set breakpoints, e.g. on the `button.Click` handler, single-step through the code, inspect local variables. And memory.
+With the application launched go to *File*, *Open*, and selected *File...*. Navigate to the source corresponding to the application, and load up *main.rs*. You can now set breakpoints, e.g. on the `button.Click()` handler, single-step through the code, inspect local variables. And memory.
 
-Variable display is still painfully close to how the linker left the code, given that there are no visualizers akin to [.natvis](https://docs.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-native-objects) available. Maybe someone with experience can see whether this situation can be improved.
+Variable display is still painfully close to how the linker left the code, making information challenging to navigate and comprehend. While the Rust team has put together a set of [.nativs visualizers](https://github.com/rust-lang/rust/tree/master/src/etc/natvis) to improve the debugging experience for Visual Studio, I wasn't able observe any change.
+
+For reference, I navigated to the user-specific [natvis file location](https://docs.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-native-objects#BKMK_natvis_location) making sure to match the version of Visual Studio I'd been using, and ran the following from a command prompt to download all 4 files:
+
+```none
+curl -LJO https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/natvis/intrinsic.natvis
+curl -LJO https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/natvis/liballoc.natvis
+curl -LJO https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/natvis/libcore.natvis
+curl -LJO https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/natvis/libstd.natvis
+```
+
+This should have changed things for the better, but didn't for me. If anyone knows what's wrong, please [let me know](https://github.com/tim-weis/cargo-uwp/issues).
 
 ## What next
 
