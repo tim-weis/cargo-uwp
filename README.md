@@ -105,7 +105,7 @@ First, though, you will have to go back and provide meaningful values in the `[p
 
 ## Future work
 
-It's still early days, and a lot of features and tool support are still missing. In its current state, `cargo uwp` can be used to produce artifacts ready to be packaged, signed, bundled, and deployed through Microsoft's Store. Future work will address these shortcomings, namely
+It's still early days, and a lot of features and tool support are lacking. In its current state, `cargo uwp` can be used to produce artifacts ready to be packaged, signed, bundled, and deployed through the Microsoft Store. Most of the process is manual, and future work will address these shortcomings:
 
 * Support easier registration for testing
 * Streamline .appx package generation
