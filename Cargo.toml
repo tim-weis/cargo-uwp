@@ -1,6 +1,6 @@
 [package]
 name = "cargo-uwp"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Tim Weis <tim.weis@outlook.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -14,11 +14,6 @@ exclude = ["docs", "README.md", "CHANGELOG.md"]
 [[bin]]
 name = "cargo-uwp"
 path = "src/main.rs"
-doc = false
-
-[lib]
-name = "cargo_uwp"
-path = "src/lib.rs"
 doc = false
 
 [dependencies]

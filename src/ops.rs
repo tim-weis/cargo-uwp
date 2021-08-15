@@ -7,24 +7,14 @@ use std::{fs, path::PathBuf};
 use structopt::StructOpt;
 use toml_edit as toml;
 
-use cargo_uwp::{
-    PACKAGE_IDENTITY_NAME_DEFAULT, PACKAGE_IDENTITY_NAME_KEY, PACKAGE_IDENTITY_PUBLISHER_DEFAULT,
-    PACKAGE_IDENTITY_PUBLISHER_KEY, PACKAGE_PUBLISHER_DISPLAY_NAME_DEFAULT,
-    PACKAGE_PUBLISHER_DISPLAY_NAME_KEY, PACKAGE_VISUAL_DESCRIPTION_DEFAULT,
-    PACKAGE_VISUAL_DESCRIPTION_KEY, PACKAGE_VISUAL_DISPLAY_NAME_DEFAULT,
-    PACKAGE_VISUAL_DISPLAY_NAME_KEY,
-};
-
 use crate::cargo;
 use crate::data::{
     APPX_MANIFEST_TEMPLATE, APPX_MANIFEST_TEMPLATE_FILENAME, ASSETS_DIR, BINDINGS_BUILD_RS,
-    BINDINGS_CARGO_TOML, BINDINGS_CRATE_PATH, BINDINGS_SRC_LIB_RS, BUILD_RS, BUILD_RS_FILENAME,
-    CARGO_CONFIG_DIR, CARGO_CONFIG_TOML, CARGO_CONFIG_TOML_FILENAME, FILE_MAPPINGS_TEMPLATE,
-    FILE_MAPPINGS_TEMPLATE_FILENAME, PACKAGE_IDENTITY_NAME_PLACEHOLDER,
-    PACKAGE_IDENTITY_PUBLISHER_PLACEHOLDER, PACKAGE_METADATA_INIT,
-    PACKAGE_PUBLISHER_DISPLAY_NAME_PLACEHOLDER, PACKAGE_VISUAL_DESCRIPTION_PLACEHOLDER,
-    PACKAGE_VISUAL_DISPLAY_NAME_PLACEHOLDER, RUST_TOOLCHAIN_TOML, RUST_TOOLCHAIN_TOML_FILENAME,
-    SPLASH_SCREEN_PNG, SPLASH_SCREEN_PNG_FILENAME, SQUARE_150_LOGO_PNG,
+    BINDINGS_CARGO_TOML, BINDINGS_CRATE_PATH, BINDINGS_SRC_LIB_RS, BUILD_DIR, BUILD_RS,
+    BUILD_RS_FILENAME, CARGO_CONFIG_DIR, CARGO_CONFIG_TOML, CARGO_CONFIG_TOML_FILENAME,
+    FILE_MAPPINGS_TEMPLATE, FILE_MAPPINGS_TEMPLATE_FILENAME, METADATA_PLACEHOLDERS,
+    PACKAGE_METADATA_INIT, RUST_TOOLCHAIN_TOML, RUST_TOOLCHAIN_TOML_FILENAME, SHARED_RS,
+    SHARED_RS_FILENAME, SPLASH_SCREEN_PNG, SPLASH_SCREEN_PNG_FILENAME, SQUARE_150_LOGO_PNG,
     SQUARE_150_LOGO_PNG_FILENAME, SQUARE_44_LOGO_PNG, SQUARE_44_LOGO_PNG_FILENAME, SRC_MAIN_RS,
     STORE_LOGO_PNG, STORE_LOGO_PNG_FILENAME, TEMPLATES_DIR, WINDOWS_RS_VERSION,
     WINDOWS_RS_VERSION_PLACEHOLDER,
@@ -56,40 +46,7 @@ impl New {
 
         // Expand placeholders in `package.metadata` table
         let mut metadata = PACKAGE_METADATA_INIT.to_owned();
-        for (from, (k, v)) in [
-            (
-                PACKAGE_IDENTITY_NAME_PLACEHOLDER,
-                (PACKAGE_IDENTITY_NAME_KEY, PACKAGE_IDENTITY_NAME_DEFAULT),
-            ),
-            (
-                PACKAGE_IDENTITY_PUBLISHER_PLACEHOLDER,
-                (
-                    PACKAGE_IDENTITY_PUBLISHER_KEY,
-                    PACKAGE_IDENTITY_PUBLISHER_DEFAULT,
-                ),
-            ),
-            (
-                PACKAGE_PUBLISHER_DISPLAY_NAME_PLACEHOLDER,
-                (
-                    PACKAGE_PUBLISHER_DISPLAY_NAME_KEY,
-                    PACKAGE_PUBLISHER_DISPLAY_NAME_DEFAULT,
-                ),
-            ),
-            (
-                PACKAGE_VISUAL_DISPLAY_NAME_PLACEHOLDER,
-                (
-                    PACKAGE_VISUAL_DISPLAY_NAME_KEY,
-                    PACKAGE_VISUAL_DISPLAY_NAME_DEFAULT,
-                ),
-            ),
-            (
-                PACKAGE_VISUAL_DESCRIPTION_PLACEHOLDER,
-                (
-                    PACKAGE_VISUAL_DESCRIPTION_KEY,
-                    PACKAGE_VISUAL_DESCRIPTION_DEFAULT,
-                ),
-            ),
-        ] {
+        for (from, (k, v)) in METADATA_PLACEHOLDERS {
             metadata = metadata.replace(from, &format!("{} = \"{}\"", k, v));
         }
         // Append `package.metadata` to *Cargo.toml*
@@ -148,6 +105,13 @@ impl New {
         dependencies["bindings"] = toml::value(toml::Value::InlineTable(bindings));
         dependencies["windows"] = toml::value(toml::Value::from(WINDOWS_RS_VERSION));
 
+        // Add custom path to build script
+        let package = manifest["package"].as_table_mut().unwrap();
+        package["build"] = toml::value(toml::Value::from(format!(
+            "{}/{}",
+            BUILD_DIR, BUILD_RS_FILENAME
+        )));
+
         fs::write(
             &manifest_file,
             manifest.to_string_in_original_order().as_bytes(),
@@ -195,7 +159,18 @@ impl New {
         )?;
 
         // Write build system file(s)
-        write_file(&package_root, None, BUILD_RS_FILENAME, BUILD_RS)?;
+        write_file(
+            &package_root,
+            Some(&[BUILD_DIR]),
+            BUILD_RS_FILENAME,
+            BUILD_RS,
+        )?;
+        write_file(
+            &package_root,
+            Some(&[BUILD_DIR]),
+            SHARED_RS_FILENAME,
+            SHARED_RS,
+        )?;
 
         Ok(())
     }

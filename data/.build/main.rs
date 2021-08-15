@@ -10,7 +10,8 @@ use std::{
 
 use toml::{value::Map, Value};
 
-use cargo_uwp::*;
+mod shared;
+use shared::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let cargo_config = get_cargo_config()?;
@@ -194,11 +195,17 @@ fn get_appx_config(
     );
 
     // Extract identity version; fall back to package version when missing
-    let identity_version = if let Some(version) = appxmanifest.get("package-identity-version") {
-        version
+    let identity_version = if let Some(version) = appxmanifest.get(PACKAGE_IDENTITY_VERSION_KEY) {
+        let version = version
             .as_str()
-            .ok_or("Invalid 'package-identity-version' entry")?
-            .to_owned()
+            .ok_or(format!("Invalid '{}' key", PACKAGE_IDENTITY_VERSION_KEY))?
+            .to_owned();
+        warn_if_default(
+            PACKAGE_IDENTITY_VERSION_KEY,
+            &version,
+            PACKAGE_IDENTITY_VERSION_DEFAULT,
+        );
+        version
     } else {
         let mut version = cargo_pkg_config.version.clone();
         version.push_str(".0");
@@ -207,21 +214,29 @@ fn get_appx_config(
 
     // Extract phone product id; when missing store `None` to remove Windows 10 Mobile
     // support
-    let phone_product_id = if let Some(id) = appxmanifest.get("package-phoneidentity-productid") {
-        Some(
-            id.as_str()
-                .ok_or("Invalid 'package-phoneidentity-productid' entry")?
-                .to_owned(),
-        )
+    let phone_product_id = if let Some(id) = appxmanifest.get(PACKAGE_PHONE_ID_KEY) {
+        let id = id
+            .as_str()
+            .ok_or(format!("Invalid '{}' key", PACKAGE_PHONE_ID_KEY))?
+            .to_owned();
+        warn_if_default(PACKAGE_PHONE_ID_KEY, &id, PACKAGE_PHONE_ID_DEFAULT);
+        Some(id)
     } else {
         None
     };
 
     // Extract display name; fall back to package name when missing
-    let display_name = if let Some(name) = appxmanifest.get("package-properties-displayname") {
-        name.as_str()
-            .ok_or("Invalid 'package-properties-displayname' entry")?
-            .to_owned()
+    let display_name = if let Some(name) = appxmanifest.get(PACKAGE_DISPLAY_NAME_KEY) {
+        let name = name
+            .as_str()
+            .ok_or(format!("Invalid '{}' key", PACKAGE_DISPLAY_NAME_KEY))?
+            .to_owned();
+        warn_if_default(
+            PACKAGE_DISPLAY_NAME_KEY,
+            &name,
+            PACKAGE_DISPLAY_NAME_DEFAULT,
+        );
+        name
     } else {
         cargo_pkg_config.name.clone()
     };

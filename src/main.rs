@@ -6,6 +6,7 @@ use structopt::StructOpt;
 mod cargo;
 mod data;
 mod ops;
+mod shared;
 
 use ops::New;
 
