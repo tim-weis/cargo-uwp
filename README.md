@@ -93,7 +93,7 @@ To [debug an installed UWP app package](https://docs.microsoft.com/en-us/visuals
 
 With the application launched go to *File*, *Open*, and selected *File...*. Navigate to the source corresponding to the application, and load up *main.rs*. You can now set breakpoints, e.g. on the `button.Click` handler, single-step through the code, inspect local variables. And memory.
 
-Variable display is still brutally close to how the linker left the code, given that there no visualizers akin to [.natvis](https://docs.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-native-objects) available. Maybe someone with experience can see whether this situation can be improved.
+Variable display is still painfully close to how the linker left the code, given that there are no visualizers akin to [.natvis](https://docs.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-native-objects) available. Maybe someone with experience can see whether this situation can be improved.
 
 ## What next
 

@@ -16,11 +16,6 @@ name = "cargo-uwp"
 path = "src/main.rs"
 doc = false
 
-[lib]
-name = "cargo_uwp"
-path = "src/lib.rs"
-doc = false
-
 [dependencies]
 anyhow = "1.0.42"
 console = "0.14.1"
