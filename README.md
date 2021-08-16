@@ -112,6 +112,6 @@ It's still early days, and a lot of features and tool support are lacking. In it
 * Allow for .appxbundle bundling
 * Implement .appxsym support for better diagnostics
 * Package signing and self-signed certificate generation
-* ... and more
+* ... and [more](https://github.com/tim-weis/cargo-uwp/issues)
 
-If you have problems using this tool, suggestions, or feature requests, make sure to [file an issue](https://github.com/tim-weis/cargo-uwp/issues).
+If you have problems using this tool, suggestions, or feature requests, make sure to [file an issue](https://github.com/tim-weis/cargo-uwp/issues/new).
