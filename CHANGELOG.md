@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Added
   - Support comments in templates/FileMapping.ini
+  - \[Partial\] documentation of the build system (#2)
 - Changed
 - Deprecated
 - Removed
