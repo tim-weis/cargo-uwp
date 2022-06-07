@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed
 - Security
 
+## [0.2.2] - 2022-06-07
+### Security
+- Addresses [CVE-2022-24713](https://www.cve.org/CVERecord?id=CVE-2022-24713)
+
 ## [0.2.1] - 2021-08-15
 ### Changed
 - Internal: Removed the requirement to share data between the binary and build script through a published library
@@ -26,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build system generator and UWP starter project
 
 [Unreleased]: https://github.com/tim-weis/cargo-uwp/compare/master...develop
+[0.2.2]: https://github.com/tim-weis/cargo-uwp/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/tim-weis/cargo-uwp/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/tim-weis/cargo-uwp/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/tim-weis/cargo-uwp/tree/0.1.0
